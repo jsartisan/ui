@@ -20,4 +20,4 @@ jobs:
           node-version: 18
 
       - run: pnpm install --frozen-lockfile --prefer-offline
-      - run: pnpm exec esno scripts/actions/loader.ts ${{ github.token }} issue-pr
+      - run: pnpm exec tsx scripts/actions/loader.ts ${{ github.token }} issue-pr
