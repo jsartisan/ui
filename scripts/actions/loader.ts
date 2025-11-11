@@ -10,8 +10,12 @@ async function main(): Promise<void> {
   const fnName = process.argv[3];
   const github = getOctokit(token);
 
-  const fn = require(`./${fnName}.ts`);
-  fn.default(github, context, core, io);
+  const module = await import(`./${fnName}.ts`);
+  if (typeof module.default !== "function") {
+    throw new Error(`Action "${fnName}" does not export a default function.`);
+  }
+
+  await module.default(github, context, core, io);
 }
 
 function handleError(err: any): void {
