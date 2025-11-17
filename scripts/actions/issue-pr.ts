@@ -41,12 +41,10 @@ const action: Action = async (github, context, core) => {
     const registryAlreadyExists = registries.hasOwnProperty(registryIssue.name);
 
     registries[registryIssue.name] = registryIssue.url;
-    const sortedRegistries = sortRegistries(registries);
-
     const nextDirectory = updateRegistryDirectory(directory, registryIssue);
 
     const files: Record<string, string> = {
-      [REGISTRIES_JSON_PATH]: `${JSON.stringify(sortedRegistries, null, 2)}\n`,
+      [REGISTRIES_JSON_PATH]: `${JSON.stringify(registries, null, 2)}\n`,
       [REGISTRY_DIRECTORY_JSON_PATH]: `${JSON.stringify(nextDirectory, null, 2)}\n`,
     };
 
@@ -264,10 +262,6 @@ async function readJsonFile<T>(github: Github, owner: string, repo: string, path
   }
 }
 
-function sortRegistries(registries: RegistriesMap): RegistriesMap {
-  return Object.fromEntries(Object.entries(registries).sort(([a], [b]) => a.localeCompare(b)));
-}
-
 function updateRegistryDirectory(directory: RegistryDirectoryEntry[], data: RegistryIssue) {
   const nextDirectory = [...directory];
   const entry: RegistryDirectoryEntry = {
@@ -286,7 +280,6 @@ function updateRegistryDirectory(directory: RegistryDirectoryEntry[], data: Regi
     nextDirectory.push(entry);
   }
 
-  nextDirectory.sort((a, b) => a.name.localeCompare(b.name));
   return nextDirectory;
 }
 
